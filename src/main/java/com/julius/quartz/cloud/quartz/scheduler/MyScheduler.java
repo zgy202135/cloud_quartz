@@ -3,6 +3,9 @@ package com.julius.quartz.cloud.quartz.scheduler;
 import com.julius.quartz.cloud.quartz.job.HelloJob;
 import com.julius.quartz.cloud.quartz.job.PrintWordsJob;
 import org.quartz.*;
+import org.quartz.impl.calendar.BaseCalendar;
+import org.quartz.impl.calendar.CronCalendar;
+import org.quartz.impl.calendar.HolidayCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,14 +104,26 @@ public class MyScheduler {
         jobDataMap.put("userName","ceshi");
         jobDataMap.put("age",22);
 
+        JobDetail jobDetail2 = JobBuilder.newJob(PrintWordsJob.class).withIdentity("jobDataMap2","groupOne").build();
+        JobDataMap jobDataMap2 = jobDetail.getJobDataMap();
+        jobDataMap2.put("userName","ceshi");
+        jobDataMap2.put("age",22);
+
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
         CronTrigger cronTrigger = TriggerBuilder.newTrigger()
                 .withIdentity("triggerOne","triggerGroupOne1")
                 .withSchedule(cronScheduleBuilder)
                 .build();
 
+        CronTrigger cronTrigger2 = TriggerBuilder.newTrigger()
+                .withIdentity("triggerOne1","triggerGroupOne1")
+                .withSchedule(cronScheduleBuilder)
+                .withPriority(6)
+                .build();
+
         if(!scheduler.isShutdown()){
             scheduler.scheduleJob(jobDetail,cronTrigger);
+            scheduler.scheduleJob(jobDetail2,cronTrigger2);
             scheduler.start();
         }else{
             logger.info(" scheduler is already shut down");

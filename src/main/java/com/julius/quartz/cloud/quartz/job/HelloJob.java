@@ -21,6 +21,7 @@ public class HelloJob implements Job{
         Integer age = jobDataMap.getIntValue("age");
         jobDataMap.put("userName","ceshi2");// update jobDataMap
         System.out.println("user name:"+userName+",age:"+age+",job key:"+jobKey);
+        System.out.println("the job key of the trigger is :"+jobExecutionContext.getTrigger().getJobKey());
     }
 
 
