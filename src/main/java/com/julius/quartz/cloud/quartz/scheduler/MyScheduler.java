@@ -1,5 +1,6 @@
 package com.julius.quartz.cloud.quartz.scheduler;
 
+import com.julius.quartz.cloud.quartz.job.HelloJob;
 import com.julius.quartz.cloud.quartz.job.PrintWordsJob;
 import org.quartz.*;
 import org.slf4j.Logger;
@@ -45,20 +46,14 @@ public class MyScheduler {
 
         //create trigger
 
-        Date startDate = new Date();
-        startDate.setTime(startDate.getTime()+5000);
-
-        Date endDate = new Date();
-        endDate.setTime(startDate.getTime()+5000);
-
         Trigger trigger = TriggerBuilder.newTrigger()
                 .usingJobData("trigger1","This is one Trigger!")
                 .withIdentity("triggerOne","triggerGroupOne") //set name and group name for trigger
 //                .startNow() //start trigger now
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInSeconds(1).repeatForever()) //use scheduler
-                .startAt(startDate) //start time
-                .endAt(endDate) //end don't execute job
+                .withIntervalInSeconds(1)) //use scheduler
+//                .startAt(startDate) //start time
+//                .endAt(endDate) //end don't execute job
                 .build();
 
         //do it
@@ -70,8 +65,8 @@ public class MyScheduler {
 
         //stop it
 
-        TimeUnit.MINUTES.sleep(1);
-        scheduler.shutdown();
+        TimeUnit.SECONDS.sleep(10);
+//        scheduler.shutdown();
         logger.info("-------------scheduler stop ------------------");
     }
 
@@ -87,14 +82,7 @@ public class MyScheduler {
                 .build();
 
         //create CronTrigger
-
-        Date startDate = new Date();
-        startDate.setTime(startDate.getTime()+5000);
-
-        Date endDate = new Date();
-        endDate.setTime(startDate.getTime()+5000);
-
-        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0/5 * * * * ?");
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("20 26 17 * * ?");
         CronTrigger trigger =  (CronTrigger) TriggerBuilder.newTrigger()
                 .usingJobData("cronTrigger","This is a cron trigger .")
                 .startNow()
@@ -104,7 +92,27 @@ public class MyScheduler {
         //start
         scheduler.scheduleJob(jobDetail,trigger);
         scheduler.start();
-
     }
 
+    //test jobDataMap
+    public void testJobDataMap()throws SchedulerException{
+        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class).withIdentity("jobDataMap","groupOne").build();
+        JobDataMap jobDataMap = jobDetail.getJobDataMap();
+        jobDataMap.put("userName","ceshi");
+        jobDataMap.put("age",22);
+
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
+        CronTrigger cronTrigger = TriggerBuilder.newTrigger()
+                .withIdentity("triggerOne","triggerGroupOne1")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+
+        if(!scheduler.isShutdown()){
+            scheduler.scheduleJob(jobDetail,cronTrigger);
+            scheduler.start();
+        }else{
+            logger.info(" scheduler is already shut down");
+        }
+
+    }
 }

@@ -31,8 +31,10 @@ public class ApplicationStartQuartzJobListener implements ApplicationListener<Co
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
-            myScheduler.testCronQuartz();
             System.out.println("任务已经启动...");
+//            myScheduler.testCronQuartz();
+//            myScheduler.testQuartz();
+            myScheduler.testJobDataMap();
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
