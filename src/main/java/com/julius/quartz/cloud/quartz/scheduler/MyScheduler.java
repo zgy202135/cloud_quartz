@@ -2,6 +2,7 @@ package com.julius.quartz.cloud.quartz.scheduler;
 
 import com.julius.quartz.cloud.quartz.job.HelloJob;
 import com.julius.quartz.cloud.quartz.job.PrintWordsJob;
+import com.julius.quartz.cloud.quartz.listener.OwnerTriggerListenerSupport;
 import org.quartz.*;
 import org.quartz.impl.calendar.BaseCalendar;
 import org.quartz.impl.calendar.CronCalendar;
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,6 +30,8 @@ public class MyScheduler {
     private Scheduler scheduler;
     @Autowired
     private PrintWordsJob printWordsJob;
+    @Autowired
+    private OwnerTriggerListenerSupport ownerTriggerListenerSupport;
 
     /**
      * 1、create scheduler
@@ -53,7 +55,7 @@ public class MyScheduler {
                 .usingJobData("trigger1","This is one Trigger!")
                 .withIdentity("triggerOne","triggerGroupOne") //set name and group name for trigger
 //                .startNow() //start trigger now
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow()
                 .withIntervalInSeconds(1)) //use scheduler
 //                .startAt(startDate) //start time
 //                .endAt(endDate) //end don't execute job
@@ -128,6 +130,12 @@ public class MyScheduler {
         }else{
             logger.info(" scheduler is already shut down");
         }
+    }
+
+    /**
+     * @Description test owner trigger listener and job listener
+     */
+    public void testOwnerListener(){
 
     }
 }
