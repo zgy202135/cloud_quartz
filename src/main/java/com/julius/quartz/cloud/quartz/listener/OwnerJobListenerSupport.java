@@ -23,6 +23,9 @@ public class OwnerJobListenerSupport implements JobListener {
     public String getName() {
         String name = getClass().getSimpleName();
         logger.info("The listener's name is {}",name);
+
+
+
         return name;
     }
 
