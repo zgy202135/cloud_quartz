@@ -33,9 +33,11 @@ public class ApplicationStartQuartzJobListener implements ApplicationListener<Co
         try {
             System.out.println("任务已经启动...");
 //            myScheduler.testCronQuartz();
-//            myScheduler.testQuartz();
-            myScheduler.testJobDataMap();
+            myScheduler.testQuartz();
+//            myScheduler.testJobDataMap();
         } catch (SchedulerException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
